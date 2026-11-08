@@ -71,3 +71,14 @@
 | `in twice bigger than` | `twice as large as`, `double that of` | Нелегитимная калька с русского «в два раза больше» |
 | `strongly bad development` | `highly negative development` | Нарушение академической коллокации |
 | `really terrible` | `severely detrimental`, `alarming` | Разговорная лексика, недопустимая в IELTS Academic |
+
+---
+
+## 3. Эшелоны Восхождения: Матрица Требований (6.0 $\rightarrow$ 6.5 $\rightarrow$ 7.0)
+
+| Уровень | Границы Допуска (Gatekeeper) | Задачи Грамматики (GRA) | Задачи Лексики и Связности (LR & CC) |
+|---|---|---|---|
+| **Band 6.0** | Плотность ошибок `< 30%` предложений | Искоренение пропусков `to be`, `cannot to`, потери `-s` в 3-м лице. Базовые сложные предложения (`because`, `although`). | Устранение всех слов из Stop-List. Различение частей речи (`dominate` vs `dominant`). Четкий Overview и PEEL. |
+| **Band 6.5** | Плотность ошибок `< 15%`, минимум 3 типа сложных конструкций на абзац | Безошибочный пассив (`is produced by`), условные конструкции (`If...`), придаточные определительные (`which leads to`). | Академические коллокации (`pose a threat`, `account for a negligible share`). Отказ от шаблонных клише в начале каждого предложения. |
+| **Band 7.0** | Плотность ошибок `< 5%` (*frequent error-free complex sentences*) | Причастные обороты (`Resulting in...`), инверсия, номинализация (`The rapid proliferation of...`). | Продвинутая лексика с точной сочетаемостью, Хеджирование (`tends to exacerbate`, `is arguably attributed to`). |
+

@@ -52,7 +52,8 @@ graph TD
 
 ### 3.1. Сущность `MistakeEntity`
 * `id: String` (UUID)
-* `category: String` (`GRA_VERB_MISSING`, `GRA_MODAL_TO`, `GRA_3RD_PERSON_S`, `LR_WORD_FAMILY`, `LR_STOP_WORD`)
+* `targetBand: Double` (`6.0`, `6.5`, `7.0`)
+* `category: String` (`GRA_VERB_MISSING`, `GRA_MODAL_TO`, `GRA_3RD_PERSON_S`, `LR_WORD_FAMILY`, `LR_STOP_WORD`, `GRA_COMPLEX_CLAUSE`, `LR_COLLOCATION`, `GRA_NOMINALIZATION`)
 * `rawSentence: String`
 * `correctedSentence: String`
 * `ruleExplanation: String`
@@ -61,7 +62,8 @@ graph TD
 
 ### 3.2. Сущность `DrillEntity`
 * `id: String`
-* `type: String` (`BLOCK_BUILDER`, `ERROR_HUNTING`, `SLOT_FILLING`)
+* `targetBand: Double` (`6.0`, `6.5`, `7.0`)
+* `type: String` (`BLOCK_BUILDER`, `ERROR_HUNTING`, `SLOT_FILLING`, `STYLE_UPGRADE`)
 * `prompt: String`
 * `options: List<String>` (Конвертируется через TypeConverter)
 * `correctAnswer: String`
