@@ -16,8 +16,10 @@ data class ExaminerReport(
 )
 
 class GeminiExaminerService(
-    private val apiKeyProvider: () -> String?
+    private val apiKeyProvider: () -> String? = { System.getenv("GEMINI_API_KEY") }
 ) {
+    val modelName = "gemini-flash-latest"
+
     fun isAvailable(): Boolean = !apiKeyProvider().isNullOrBlank()
 
     /**
