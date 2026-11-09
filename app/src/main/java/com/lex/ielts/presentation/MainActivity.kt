@@ -7,24 +7,24 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Build
-import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.lex.ielts.presentation.screens.DictionaryScreen
 import com.lex.ielts.presentation.screens.EssayEditorScreen
-import com.lex.ielts.presentation.screens.PreFlightAuditScreen
 import com.lex.ielts.presentation.screens.SentenceSurgeryScreen
 import com.lex.ielts.presentation.screens.WordFamilyScreen
 
 enum class Screen(val title: String, val icon: ImageVector) {
     SURGERY("Хирургия", Icons.Default.Build),
     WORD_FAMILY("Части речи", Icons.Default.List),
-    PEEL_EDITOR("PEEL Эссе", Icons.Default.Edit),
-    PREFLIGHT("Чеклист", Icons.Default.CheckCircle)
+    PEEL_EDITOR("PEEL Темы", Icons.Default.Edit),
+    DICTIONARY("Словарь", Icons.Default.Search)
 }
 
 class MainActivity : ComponentActivity() {
@@ -36,7 +36,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IeltsAppRoot() {
     var currentScreen by remember { mutableStateOf(Screen.SURGERY) }
@@ -73,11 +72,7 @@ fun IeltsAppRoot() {
         ) {
             when (currentScreen) {
                 Screen.SURGERY -> {
-                    SentenceSurgeryScreen(
-                        rawSentence = "housing stopped be a biggest expenditures in country",
-                        targetFix = "housing stopped being the biggest expenditure in the country",
-                        onSuccess = { /* логирование в Room DB */ }
-                    )
+                    SentenceSurgeryScreen()
                 }
                 Screen.WORD_FAMILY -> {
                     WordFamilyScreen(onProgressUpdate = {})
@@ -85,8 +80,8 @@ fun IeltsAppRoot() {
                 Screen.PEEL_EDITOR -> {
                     EssayEditorScreen(taskType = 2, onSaveEssay = {})
                 }
-                Screen.PREFLIGHT -> {
-                    PreFlightAuditScreen(onAuditComplete = {})
+                Screen.DICTIONARY -> {
+                    DictionaryScreen()
                 }
             }
         }
