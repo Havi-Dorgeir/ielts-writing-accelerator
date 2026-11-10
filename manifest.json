@@ -1,0 +1,21 @@
+{
+  "name": "Lex Mechanicus — IELTS Accelerator",
+  "short_name": "Lex IELTS",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0d0e15",
+  "theme_color": "#111420",
+  "description": "IELTS Academic Writing offline acceleration system for Band 6.0 - 7.0+",
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
