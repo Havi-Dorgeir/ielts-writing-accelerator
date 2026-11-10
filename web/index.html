@@ -7,6 +7,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Lex IELTS">
   <meta name="theme-color" content="#0d0e15">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <title>Lex Mechanicus — IELTS Accelerator (iOS / Web)</title>
   <style>
     :root {
@@ -152,8 +154,19 @@
 
   <header>
     <h1>⚙️ Lex Mechanicus</h1>
-    <span class="badge badge-gold">iOS & Web Edition</span>
+    <button onclick="toggleIosGuide()" style="background:rgba(0,210,255,0.15); border:1px solid var(--accent); color:var(--accent); border-radius:6px; font-size:0.75rem; padding:4px 8px; cursor:pointer;">📱 На экран iPhone</button>
   </header>
+
+  <div id="ios-install-banner" style="display:none; background:#1b2033; border-bottom:2px solid var(--accent); padding:12px 16px; font-size:0.85rem; line-height:1.4;">
+    <div style="font-weight:bold; color:var(--accent); margin-bottom:4px;">📲 Как установить на iPhone репетитора:</div>
+    <ol style="margin:4px 0 8px 16px; padding:0; color:#cbd5e1;">
+      <li>Откройте эту ссылку в <b>Safari</b> на iPhone.</li>
+      <li>Нажмите внизу кнопку <b>«Поделиться»</b> (квадрат со стрелочкой вверх <span style="font-size:1rem;">⬆️</span>).</li>
+      <li>Пролистайте вниз и выберите <b>«На экран Домой» («Add to Home Screen»)</b>.</li>
+      <li>Нажмите <b>«Добавить»</b>. Приложение появится на рабочем столе и работает без интернета!</li>
+    </ol>
+    <button onclick="toggleIosGuide()" style="background:#2d3748; color:#fff; border:none; padding:4px 10px; border-radius:4px; font-size:0.75rem; cursor:pointer;">Закрыть подсказку</button>
+  </div>
 
   <!-- TAB 0: ROADMAP -->
   <div id="screen-roadmap" class="screen active">
@@ -464,6 +477,18 @@
           <div style="font-size:0.8rem; color:var(--text-muted); margin-top:6px;">${d.exp}</div>
         </div>
       `).join('');
+    }
+
+    function toggleIosGuide() {
+      const b = document.getElementById('ios-install-banner');
+      b.style.display = b.style.display === 'none' ? 'block' : 'none';
+    }
+
+    // Service Worker for 100% Offline Cache
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW registration failed:', err));
+      });
     }
 
     // Init
