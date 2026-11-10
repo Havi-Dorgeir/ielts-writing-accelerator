@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Lex IELTS">
+  <meta name="theme-color" content="#0d0e15">
+  <title>Lex Mechanicus — IELTS Accelerator (iOS / Web)</title>
+  <style>
+    :root {
+      --bg: #0d0e15;
+      --card-bg: #141724;
+      --border: #23283e;
+      --accent: #00d2ff;
+      --accent-gold: #f5a623;
+      --text: #e6edf3;
+      --text-muted: #8b949e;
+      --danger: #f85149;
+      --success: #3fb950;
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body {
+      margin: 0;
+      padding: 0;
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: calc(env(safe-area-inset-bottom) + 65px);
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    header {
+      padding: 16px;
+      background: #111420;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 1.1rem;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .badge {
+      font-size: 0.7rem;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .badge-gold { background: rgba(245, 166, 35, 0.2); color: var(--accent-gold); }
+    .badge-cyan { background: rgba(0, 210, 255, 0.2); color: var(--accent); }
+    .badge-green { background: rgba(63, 185, 80, 0.2); color: var(--success); }
+    .badge-red { background: rgba(248, 81, 73, 0.2); color: var(--danger); }
+    
+    .screen { display: none; padding: 16px; max-width: 640px; margin: 0 auto; }
+    .screen.active { display: block; }
+    
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+    
+    /* Bottom Navigation Bar for iOS */
+    nav.tab-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: calc(56px + env(safe-area-inset-bottom));
+      padding-bottom: env(safe-area-inset-bottom);
+      background: #111420;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      z-index: 100;
+    }
+    .tab-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 0.65rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      padding: 6px;
+      cursor: pointer;
+    }
+    .tab-btn .icon { font-size: 1.2rem; }
+    .tab-btn.active { color: var(--accent); font-weight: bold; }
+    
+    button.btn-primary {
+      width: 100%;
+      background: var(--accent);
+      color: #000;
+      font-weight: bold;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+    
+    textarea, input[type="text"] {
+      width: 100%;
+      background: #0d0f17;
+      border: 1px solid var(--border);
+      color: #fff;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      outline: none;
+    }
+    textarea:focus, input[type="text"]:focus { border-color: var(--accent); }
+    
+    .option-btn {
+      width: 100%;
+      text-align: left;
+      background: #191d2c;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .option-btn.selected { border-color: var(--accent); background: rgba(0, 210, 255, 0.15); }
+    .option-btn.correct { border-color: var(--success); background: rgba(63, 185, 80, 0.2); color: var(--success); }
+    .option-btn.wrong { border-color: var(--danger); background: rgba(248, 81, 73, 0.2); color: var(--danger); }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>⚙️ Lex Mechanicus</h1>
+    <span class="badge badge-gold">iOS & Web Edition</span>
+  </header>
+
+  <!-- TAB 0: ROADMAP -->
+  <div id="screen-roadmap" class="screen active">
+    <div style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+      <h2 style="font-size: 1.1rem; margin:0;">14-Дневный Протокол</h2>
+      <span class="badge badge-cyan">Band 5.5 ➔ 7.0+</span>
+    </div>
+    <div id="roadmap-list"></div>
+  </div>
+
+  <!-- TAB 1: TASK 1 LAB -->
+  <div id="screen-task1" class="screen">
+    <h2 style="font-size: 1.1rem; margin-top:0;">Лаборатория Task 1: Данные и Карты</h2>
+    <div class="card" id="task1-card">
+      <div style="display:flex; justify-content:space-between; margin-bottom: 8px;">
+        <span class="badge badge-cyan" id="t1-chart-type">Line Graph</span>
+        <span class="badge badge-gold" id="t1-counter">Задание 1 / 11</span>
+      </div>
+      <h3 style="font-size: 1rem; margin: 4px 0 8px 0;" id="t1-title">Предлог изменения</h3>
+      <p style="font-size: 0.95rem; color: #fff; margin-bottom: 12px;" id="t1-prompt"></p>
+      <div id="t1-options"></div>
+      <div id="t1-explanation" style="display:none; margin-top: 10px; padding: 10px; background: rgba(0,210,255,0.1); border-radius: 8px; font-size: 0.85rem; border-left: 3px solid var(--accent);"></div>
+      <div style="display:flex; justify-content:space-between; margin-top: 14px;">
+        <button onclick="prevTask1()" style="background:#23283e; color:#fff; border:none; padding:8px 14px; border-radius:6px; font-size:0.85rem;">Назад</button>
+        <button onclick="nextTask1()" style="background:var(--accent); color:#000; border:none; padding:8px 14px; border-radius:6px; font-weight:bold; font-size:0.85rem;">Дальше</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 2: SURGERY -->
+  <div id="screen-surgery" class="screen">
+    <h2 style="font-size: 1.1rem; margin-top:0;">Хирургия предложений</h2>
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; margin-bottom: 8px;">
+        <span class="badge badge-red" id="surg-cat">GRA_MISSING_TO_BE</span>
+        <span class="badge badge-gold" id="surg-band">Цель: Band 6.0</span>
+      </div>
+      <div style="padding:10px; background:rgba(248,81,73,0.1); border:1px solid rgba(248,81,73,0.3); border-radius:8px; margin-bottom:12px;">
+        <span style="font-size:0.75rem; color:var(--danger); font-weight:bold;">⚠️ ПАЦИЕНТ СО СКРАПКОДОМ:</span>
+        <div style="font-size:0.95rem; margin-top:4px;" id="surg-raw"></div>
+      </div>
+      <label style="font-size:0.8rem; color:var(--text-muted);">Ваша операция (исправьте предложение):</label>
+      <textarea id="surg-input" rows="2" placeholder="Введите исправленное предложение..."></textarea>
+      <button class="btn-primary" onclick="checkSurgery()">Выжечь ошибку скальпелем</button>
+      <div id="surg-feedback" style="margin-top:10px; font-size:0.85rem;"></div>
+      <div id="surg-canon" style="display:none; margin-top:10px; padding:10px; background:#1b2133; border-radius:8px; font-size:0.85rem;">
+        <b style="color:var(--success);">Канонический рецепт Омниссии:</b>
+        <div id="surg-canon-text" style="color:var(--text); margin-top:4px;"></div>
+        <div id="surg-rule-text" style="color:var(--text-muted); font-size:0.8rem; margin-top:4px;"></div>
+      </div>
+      <div style="display:flex; justify-content:space-between; margin-top: 14px;">
+        <button onclick="prevSurgery()" style="background:#23283e; color:#fff; border:none; padding:8px 14px; border-radius:6px; font-size:0.85rem;">Назад</button>
+        <button onclick="nextSurgery()" style="background:var(--accent); color:#000; border:none; padding:8px 14px; border-radius:6px; font-weight:bold; font-size:0.85rem;">Дальше</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 3: WORD FAMILY -->
+  <div id="screen-words" class="screen">
+    <h2 style="font-size: 1.1rem; margin-top:0;">Матрица 30 Частей Речи</h2>
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <h3 id="wf-base" style="margin:0; font-size:1.2rem; color:var(--accent);">DOMINATE</h3>
+        <span class="badge badge-gold" id="wf-counter">1 / 17</span>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:6px; margin-bottom:14px;">
+        <div style="display:flex; justify-content:space-between; background:#181c2b; padding:8px 12px; border-radius:6px; font-size:0.85rem;">
+          <span style="color:var(--success); font-weight:bold;">[V] Глагол:</span>
+          <span id="wf-v" style="font-weight:600;"></span>
+        </div>
+        <div style="display:flex; justify-content:space-between; background:#181c2b; padding:8px 12px; border-radius:6px; font-size:0.85rem;">
+          <span style="color:var(--accent); font-weight:bold;">[N] Существительное:</span>
+          <span id="wf-n" style="font-weight:600;"></span>
+        </div>
+        <div style="display:flex; justify-content:space-between; background:#181c2b; padding:8px 12px; border-radius:6px; font-size:0.85rem;">
+          <span style="color:var(--accent-gold); font-weight:bold;">[Adj] Прилагательное:</span>
+          <span id="wf-adj" style="font-weight:600;"></span>
+        </div>
+      </div>
+      <div style="background:rgba(245,166,35,0.1); border:1px solid rgba(245,166,35,0.3); padding:10px; border-radius:8px; margin-bottom:12px;">
+        <span style="font-size:0.75rem; color:var(--accent-gold); font-weight:bold;">⚡ ЛОВУШКА ЭКЗАМЕНАТОРА:</span>
+        <div id="wf-trap" style="font-size:0.9rem; margin-top:4px;"></div>
+      </div>
+      <div id="wf-options"></div>
+      <div style="display:flex; justify-content:space-between; margin-top: 14px;">
+        <button onclick="prevWord()" style="background:#23283e; color:#fff; border:none; padding:8px 14px; border-radius:6px; font-size:0.85rem;">Назад</button>
+        <button onclick="nextWord()" style="background:var(--accent); color:#000; border:none; padding:8px 14px; border-radius:6px; font-weight:bold; font-size:0.85rem;">Дальше</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 4: DICTIONARY -->
+  <div id="screen-dictionary" class="screen">
+    <h2 style="font-size: 1.1rem; margin-top:0;">Академический Словарь</h2>
+    <input type="text" id="dict-search" placeholder="🔍 Поиск мусорных слов и апгрейдов..." oninput="renderDict()">
+    <div id="dict-list" style="margin-top:14px;"></div>
+  </div>
+
+  <!-- BOTTOM TAB BAR -->
+  <nav class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('roadmap', this)">
+      <span class="icon">📅</span>
+      <span>14 Дней</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('task1', this)">
+      <span class="icon">📊</span>
+      <span>Task 1</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('surgery', this)">
+      <span class="icon">🩺</span>
+      <span>Хирургия</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('words', this)">
+      <span class="icon">🔤</span>
+      <span>30 Слов</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('dictionary', this)">
+      <span class="icon">📖</span>
+      <span>Словарь</span>
+    </button>
+  </nav>
+
+  <script>
+    // DATA PORTED FROM MODELS
+    const roadmap = [
+      { d: 1, title: "Ликвидация связок to be", kpi: "0 пропусков is/are" },
+      { d: 2, title: "Модальные связки без to", kpi: "0 конструкций cannot to" },
+      { d: 3, title: "Согласование 3-го лица и пассив", kpi: "0 потерянных окончаний -s" },
+      { d: 4, title: "Матрица 30 частей речи", kpi: "0 ошибок в частях речи" },
+      { d: 5, title: "Task 1: Введение и Overview", kpi: "0 цифр в Overview" },
+      { d: 6, title: "Task 1: Предлоги данных и Тренды", kpi: "100% точность предлогов at/by" },
+      { d: 7, title: "Task 2: PEEL-структура Body 1", kpi: "Ровно 4 предложения на абзац" },
+      { d: 8, title: "Task 2: PEEL-структура Body 2", kpi: "Академические связки" },
+      { d: 9, title: "Task 2: Введение и Вывод", kpi: "Четкая позиция автора" },
+      { d: 10, title: "Task 1: Процессы и Карты", kpi: "100% пассивный залог" },
+      { d: 11, title: "Боевой спринт: Task 1 на таймер", kpi: "1 полный Task 1 за 15 мин" },
+      { d: 12, title: "Боевой спринт: Task 2 на таймер", kpi: "1 полное эссе Task 2 за 33 мин" },
+      { d: 13, title: "Сложные типы эссе Task 2", kpi: "Causes & Solutions" },
+      { d: 14, title: "Генеральный аудит экзаменатора", kpi: "Прогноз Band 6.5–7.0+" }
+    ];
+
+    const task1Drills = [
+      { type: "Line Graph", title: "Предлог изменения (На сколько)", prompt: "The proportion of car owners rose ________ 15% between 2000 and 2010 (с 20% до 35%).", options: ["to", "by", "at", "with"], correct: 1, exp: "Предлог 'BY' показывает разницу изменений (rose BY 15%). Предлог 'TO' указывает конечную точку." },
+      { type: "Line Graph", title: "Предлог конечной точки", prompt: "Oil consumption peaked ________ 85 million barrels per day in 2015.", options: ["at", "by", "on", "in"], correct: 0, exp: "С глаголами peak, stand, start используется предлог 'AT'." },
+      { type: "Bar Chart", title: "Предлог уровня", prompt: "In 2020, unemployment in Spain stood ________ approximately 14%.", options: ["at", "to", "by", "with"], correct: 0, exp: "Устойчивая связка: stood AT [значение]." },
+      { type: "Pie Chart", title: "Правило чистого Overview", prompt: "Какой из вариантов Overview для расходов является академически верным?", options: [
+        "Overall, in 1950 housing was 72.1% while food was 11.2%, and in 2010 food rose to 34.0%.",
+        "Overall, housing initially accounted for the lion's share of spending, but was later surpassed by food.",
+        "Overall, we can see that all categories are changed very strongly in two charts."
+      ], correct: 1, exp: "В Overview категорически запрещены цифры и проценты!" },
+      { type: "Table", title: "Сравнение: в два раза выше", prompt: "The consumption of poultry in the UK was ________ that in Germany.", options: ["in twice bigger than", "twice as high as", "two times more higher than", "double bigger as"], correct: 1, exp: "Каноническая форма: 'twice as high as'. 'In twice bigger' — грубый рунглиш!" },
+      { type: "Line Graph", title: "Стремительное падение", prompt: "Between June and August, coal exports ________ to a record low of 2 million tons.", options: ["plummeted", "dropped strongly down", "fell down heavily", "made a big decrease"], correct: 0, exp: "Академические глаголы резкого падения: plummeted, plunged." },
+      { type: "Process", title: "Пассивный залог в производстве", prompt: "At the first stage, limestone and clay ________ in a massive crushing machine.", options: ["are crushed", "crush", "are crushing", "is crushed"], correct: 0, exp: "Подлежащее во множественном числе: limestone and clay are crushed." },
+      { type: "Map", title: "Снос построек на карте", prompt: "According to the blueprint, the old industrial warehouse ________ to make way for apartments.", options: ["will demolish", "will be demolished", "is demolishing", "will been demolished"], correct: 1, exp: "В планах будущего используется пассив: will be demolished." }
+    ];
+
+    const surgeryDrills = [
+      { cat: "GRA_MISSING_TO_BE", band: 6.0, raw: "This certain model so expansive for simple people.", canon: "This certain model is so expensive for average consumers.", rule: "Обязателен глагол-связка 'is' перед предикативом." },
+      { cat: "GRA_MODAL_TO", band: 6.0, raw: "Governments cannot to solve this problem alone.", canon: "Governments cannot solve this problem alone.", rule: "После модального cannot частица to запрещена." },
+      { cat: "GRA_3RD_PERSON_S", band: 6.0, raw: "The chart demonstrate that housing consume the biggest part.", canon: "The chart demonstrates that housing consumes the largest share.", rule: "3-е лицо ед. число требует окончания -s." },
+      { cat: "LR_STOP_LIST", band: 6.0, raw: "People throw a lot of thresh into ocean.", canon: "People discard substantial amounts of waste into the ocean.", rule: "thresh — фонетическая ошибка. Правильно: waste / trash." },
+      { cat: "GRA_COMPARISON", band: 6.5, raw: "The second category was in twice bigger than first category.", canon: "The second category was twice as large as the first one.", rule: "Калька 'in twice bigger'. Правильно: twice as large as." },
+      { cat: "GRA_CONCESSION_IDIOM", band: 7.0, raw: "This demonstrate useful but later I demonstrate this dream can play opposite.", canon: "Although such goals may seem beneficial, this pursuit can ultimately backfire.", rule: "Устранение 'I demonstrate' и использование backfire." }
+    ];
+
+    const wordFamilies = [
+      { base: "DOMINATE", v: "dominate", n: "dominance", adj: "dominant", trap: "Food became the ________ category in 2010.", options: ["dominate", "dominant", "dominance"], correct: 1 },
+      { base: "CONSUME", v: "consume", n: "consumption", adj: "consumable", trap: "The average ________ of beer was higher than juice.", options: ["consume", "consumption", "consumer"], correct: 1 },
+      { base: "DEPEND", v: "depend", n: "dependency", adj: "dependent", trap: "Renewable energy is heavily ________ on weather.", options: ["depend", "dependent", "dependence"], correct: 1 },
+      { base: "EXPAND", v: "expand", n: "expansion", adj: "expansive", trap: "The council approved the ________ of the commercial zone.", options: ["expand", "expansion", "expansive"], correct: 1 },
+      { base: "RELY", v: "rely", n: "reliance", adj: "reliable", trap: "Modern society has an excessive ________ on fossil fuels.", options: ["rely", "reliable", "reliance"], correct: 2 }
+    ];
+
+    const dict = [
+      { cat: "STOP_LIST", wrong: "thresh", fix: "trash / refuse / waste", exp: "thresh = обмолачивать зерно. Мусор = waste." },
+      { cat: "STOP_LIST", wrong: "emitter", fix: "pollutant / emission source", exp: "emitter = труба/источник, а не само загрязнение." },
+      { cat: "STOP_LIST", wrong: "in twice bigger than", fix: "twice as large as / double that of", exp: "Рунглиш 'в два раза больше'." },
+      { cat: "STOP_LIST", wrong: "cannot to give", fix: "cannot give", exp: "Модальные глаголы требуют голый инфинитив без to." },
+      { cat: "STOP_LIST", wrong: "play opposite to us", fix: "backfire / work against us", exp: "Рунглиш 'сыграть против нас'." },
+      { cat: "TASK1_DATA", wrong: "rose on 10%", fix: "rose by 10%", exp: "Разница изменений передается предлогом BY." },
+      { cat: "TASK1_DATA", wrong: "peaked to 50%", fix: "peaked at 50%", exp: "Пик обозначается предлогом AT." },
+      { cat: "CONNECTOR", wrong: "in result", fix: "As a result, / Consequently,", exp: "Только As a result или Consequently." }
+    ];
+
+    // State
+    let t1Idx = 0, surgIdx = 0, wfIdx = 0;
+
+    function switchTab(name, btn) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('screen-' + name).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    // Render Roadmap
+    const rDiv = document.getElementById('roadmap-list');
+    rDiv.innerHTML = roadmap.map(r => `
+      <div class="card" style="padding:12px; display:flex; align-items:center; gap:12px;">
+        <span class="badge badge-gold" style="font-size:0.9rem;">День ${r.d}</span>
+        <div style="flex:1;">
+          <div style="font-weight:600; font-size:0.95rem;">${r.title}</div>
+          <div style="font-size:0.8rem; color:var(--text-muted); margin-top:2px;">KPI: ${r.kpi}</div>
+        </div>
+      </div>
+    `).join('');
+
+    // Task 1 Logic
+    function renderTask1() {
+      const item = task1Drills[t1Idx];
+      document.getElementById('t1-chart-type').textContent = item.type;
+      document.getElementById('t1-counter').textContent = `Задание ${t1Idx + 1} / ${task1Drills.length}`;
+      document.getElementById('t1-title').textContent = item.title;
+      document.getElementById('t1-prompt').textContent = item.prompt;
+      const exp = document.getElementById('t1-explanation');
+      exp.style.display = 'none';
+      exp.textContent = item.exp;
+
+      const optDiv = document.getElementById('t1-options');
+      optDiv.innerHTML = item.options.map((opt, i) => `
+        <button class="option-btn" onclick="selectT1Opt(${i})">${opt}</button>
+      `).join('');
+    }
+    function selectT1Opt(idx) {
+      const item = task1Drills[t1Idx];
+      const btns = document.querySelectorAll('#t1-options .option-btn');
+      btns.forEach((b, i) => {
+        b.disabled = true;
+        if (i === item.correct) b.classList.add('correct');
+        else if (i === idx) b.classList.add('wrong');
+      });
+      document.getElementById('t1-explanation').style.display = 'block';
+    }
+    function nextTask1() { if (t1Idx < task1Drills.length - 1) { t1Idx++; renderTask1(); } }
+    function prevTask1() { if (t1Idx > 0) { t1Idx--; renderTask1(); } }
+
+    // Surgery Logic
+    function renderSurgery() {
+      const item = surgeryDrills[surgIdx];
+      document.getElementById('surg-cat').textContent = item.cat;
+      document.getElementById('surg-band').textContent = `Цель: Band ${item.band}`;
+      document.getElementById('surg-raw').textContent = item.raw;
+      document.getElementById('surg-input').value = '';
+      document.getElementById('surg-feedback').textContent = '';
+      document.getElementById('surg-canon').style.display = 'none';
+      document.getElementById('surg-canon-text').textContent = item.canon;
+      document.getElementById('surg-rule-text').textContent = item.rule;
+    }
+    function checkSurgery() {
+      const val = document.getElementById('surg-input').value.trim();
+      const item = surgeryDrills[surgIdx];
+      const fb = document.getElementById('surg-feedback');
+      if (!val) {
+        fb.innerHTML = '<span style="color:var(--danger)">Введите исправленный вариант!</span>';
+        return;
+      }
+      document.getElementById('surg-canon').style.display = 'block';
+      if (val.toLowerCase().replace('.', '') === item.canon.toLowerCase().replace('.', '')) {
+        fb.innerHTML = '<span style="color:var(--success)">⚡ Слава Омниссии! Ошибка полностью устранена!</span>';
+      } else {
+        fb.innerHTML = '<span style="color:var(--accent-gold)">🔍 Сравните ваш вариант с каноном ниже.</span>';
+      }
+    }
+    function nextSurgery() { if (surgIdx < surgeryDrills.length - 1) { surgIdx++; renderSurgery(); } }
+    function prevSurgery() { if (surgIdx > 0) { surgIdx--; renderSurgery(); } }
+
+    // Word Family Logic
+    function renderWord() {
+      const item = wordFamilies[wfIdx];
+      document.getElementById('wf-base').textContent = item.base;
+      document.getElementById('wf-counter').textContent = `${wfIdx + 1} / ${wordFamilies.length}`;
+      document.getElementById('wf-v').textContent = item.v;
+      document.getElementById('wf-n').textContent = item.n;
+      document.getElementById('wf-adj').textContent = item.adj;
+      document.getElementById('wf-trap').textContent = item.trap;
+
+      const optDiv = document.getElementById('wf-options');
+      optDiv.innerHTML = item.options.map((opt, i) => `
+        <button class="option-btn" onclick="selectWFOpt(${i})">${opt}</button>
+      `).join('');
+    }
+    function selectWFOpt(idx) {
+      const item = wordFamilies[wfIdx];
+      const btns = document.querySelectorAll('#wf-options .option-btn');
+      btns.forEach((b, i) => {
+        b.disabled = true;
+        if (i === item.correct) b.classList.add('correct');
+        else if (i === idx) b.classList.add('wrong');
+      });
+    }
+    function nextWord() { if (wfIdx < wordFamilies.length - 1) { wfIdx++; renderWord(); } }
+    function prevWord() { if (wfIdx > 0) { wfIdx--; renderWord(); } }
+
+    // Dictionary Logic
+    function renderDict() {
+      const q = document.getElementById('dict-search').value.toLowerCase();
+      const list = document.getElementById('dict-list');
+      const filtered = dict.filter(d => !q || d.wrong.toLowerCase().includes(q) || d.fix.toLowerCase().includes(q));
+      list.innerHTML = filtered.map(d => `
+        <div class="card" style="margin-bottom:10px;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+            <span class="badge badge-cyan" style="font-size:0.65rem;">${d.cat}</span>
+          </div>
+          <div style="display:flex; gap:10px; align-items:center;">
+            <div style="flex:1; color:var(--danger); text-decoration:line-through; font-size:0.9rem;">${d.wrong}</div>
+            <span style="color:var(--text-muted)">➔</span>
+            <div style="flex:1; color:var(--success); font-weight:bold; font-size:0.9rem;">${d.fix}</div>
+          </div>
+          <div style="font-size:0.8rem; color:var(--text-muted); margin-top:6px;">${d.exp}</div>
+        </div>
+      `).join('');
+    }
+
+    // Init
+    renderTask1();
+    renderSurgery();
+    renderWord();
+    renderDict();
+  </script>
+</body>
+</html>
